@@ -1,0 +1,75 @@
+name: Deploy application to Production
+
+on:
+    workflow_call:
+        inputs:
+            traefik_rule:
+                required: true
+                type: string
+
+            project_directory:
+                required: true
+                type: string
+
+            network_name:
+                required: true
+                type: string
+
+            service_name:
+                required: true
+                type: string
+
+            service_port:
+                required: true
+                type: number
+
+            docker_image:
+                required: true
+                type: string
+
+            add_labels:
+                required: false
+                type: boolean
+                default: false
+
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v6.0.1
+              with:
+                  repository: hanatole/deployer
+                  ref: main
+
+            - name: Configure SSH for Ansible
+              run: |
+                  sed -i "s|SERVER_HOST|${{ secrets.SERVER_HOST }}|g" inventory.yml
+                  sed -i "s|SERVER_USER|${{ secrets.SERVER_USER }}|g" inventory.yml
+
+                  mkdir -p ~/.ssh
+                  echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' > ~/.ssh/id_ed25519
+                  chmod 600 ~/.ssh/id_ed25519
+                  ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+
+            - name: Generatete .env file
+              run: echo "${{ secrets.ENV_FILE }}" > .env
+
+            - name: Set up Ansible for deployment
+              uses: astral-sh/setup-uv@v7
+              with:
+                  version: 0.9.22
+                  python-version: 3.12
+
+            - name: Checkout at installation
+              env:
+                  traefik_rule: ${{ inputs.traefik_rule }}
+                  service_name: ${{ inputs.service_name }}
+                  docker_image: ${{ inputs.docker_image }}
+                  service_port: ${{ inputs.service_port }}
+                  network_name: ${{ inputs.network_name }}
+                  project_directory: ${{ inputs.project_directory }}
+                  add_labels: ${{ inputs.add_labels }}
+              run: |
+                  uv run ansible-playbook -i inventory.yml playbook.yml --extra-vars "traefik_rule=${traefik_rule} service_name=${service_name} docker_image=${docker_image} service_port=${service_port} network_name=${network_name} project_directory=${project_directory} add_labels=${add_labels}"
