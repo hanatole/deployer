@@ -5,6 +5,9 @@ services:
     container_name: {{ service_name }}
     restart: unless-stopped
 
+    env_file:
+      - .env
+
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.{{ service_name }}.rule={{ traefik_rule }}"
