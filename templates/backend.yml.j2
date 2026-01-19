@@ -1,19 +1,19 @@
-name: {{project_name}}-{{tier}}
+name: {{ service_name }}
 services:
-  {{ service_name }}:
+  {{service_name}}:
     image: {{ docker_image }}
-    container_name: "{{ project_name }}-db"
+    container_name: "{{ service_name }}"
     restart: unless-stopped
 
 {% if add_labels %}
 
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.{{service_name}}.rule={{ traefik_rule }}"
-      - "traefik.http.routers.{{service_name}}.entrypoints=websecure"
-      - "traefik.http.routers.{{service_name}}.tls=true"
-      - "traefik.http.routers.{{service_name}}.tls.certresolver=letsencrypt"
-      - "traefik.http.services.{{service_name}}.loadbalancer.server.port={{ service_port }}"
+      - "traefik.http.routers.{{ service_name }}.rule={{ traefik_rule }}"
+      - "traefik.http.routers.{{ service_name }}.entrypoints=websecure"
+      - "traefik.http.routers.{{ service_name }}.tls=true"
+      - "traefik.http.routers.{{ service_name }}.tls.certresolver=letsencrypt"
+      - "traefik.http.services.{{ service_name }}.loadbalancer.server.port={{ service_port }}"
 {% endif %}
 
     networks:

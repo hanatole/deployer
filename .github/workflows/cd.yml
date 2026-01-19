@@ -37,10 +37,6 @@ on:
                 type: string
                 description: "The service tier to deploy (e.g., backend, database)"
 
-            project_name:
-                required: true
-                type: string
-
             volume_path:
                 required: false
                 type: string
@@ -91,8 +87,7 @@ jobs:
                   project_directory: ${{ inputs.project_directory }}
                   add_labels: ${{ inputs.add_labels }}
                   tier: ${{ inputs.tier }}
-                  project_name: ${{ inputs.project_name }}
                   volume_path: ${{ inputs.volume_path }}
                   db_type: ${{ inputs.db_type }}
               run: |
-                  uv run ansible-playbook -i inventory.yml playbook.yml --extra-vars "traefik_rule=${traefik_rule} service_name=${service_name} docker_image=${docker_image} service_port=${service_port} network_name=${network_name} project_directory=${project_directory} add_labels=${add_labels} tier=${tier} project_name=${project_name} volume_path=${volume_path} db_type=${{ inputs.db_type }}"
+                  uv run ansible-playbook -i inventory.yml playbook.yml --extra-vars "traefik_rule=${traefik_rule} service_name=${service_name} docker_image=${docker_image} service_port=${service_port} network_name=${network_name} project_directory=${project_directory} add_labels=${add_labels} tier=${tier} volume_path=${volume_path} db_type=${{ inputs.db_type }}"
