@@ -1,0 +1,34 @@
+name: {{project_name}}-{{tier}}
+services:
+  {{ service_name }}:
+    image: {{ docker_image }}
+    container_name: {{ service_name }}
+    restart: unless-stopped
+
+{% if db_type == "postgresql" %}
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+{% endif %}
+
+    volumes:
+      - {{project_name}}-{{tier}}:{{volume_path}}
+      
+{% if add_labels %}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.{{service_name}}.rule={{ traefik_rule }}"
+      - "traefik.http.routers.{{service_name}}.entrypoints=websecure"
+      - "traefik.http.routers.{{service_name}}.tls=true"
+      - "traefik.http.routers.{{service_name}}.tls.certresolver=letsencrypt"
+      - "traefik.http.services.{{service_name}}.loadbalancer.server.port={{ service_port }}"
+{% endif %}
+
+    networks:
+      - {{ network_name }}
+
+networks:
+  {{ network_name }}:
+    name: {{ network_name }}
+    external: true

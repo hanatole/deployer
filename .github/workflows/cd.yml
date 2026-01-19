@@ -32,6 +32,25 @@ on:
                 type: boolean
                 default: false
 
+            tier:
+                required: true
+                type: string
+                description: "The service tier to deploy (e.g., backend, database)"
+
+            project_name:
+                required: true
+                type: string
+
+            volume_path:
+                required: false
+                type: string
+                default: ""
+
+            db_type:
+                required: false
+                type: string
+                default: "postgresql"
+
 jobs:
     deploy:
         runs-on: ubuntu-latest
@@ -53,7 +72,7 @@ jobs:
                   chmod 600 ~/.ssh/id_ed25519
                   ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
 
-            - name: Generatete .env file
+            - name: Generate .env file
               run: echo "${{ secrets.ENV_FILE }}" > .env
 
             - name: Set up Ansible for deployment
@@ -71,5 +90,9 @@ jobs:
                   network_name: ${{ inputs.network_name }}
                   project_directory: ${{ inputs.project_directory }}
                   add_labels: ${{ inputs.add_labels }}
+                  tier: ${{ inputs.tier }}
+                  project_name: ${{ inputs.project_name }}
+                  volume_path: ${{ inputs.volume_path }}
+                  db_type: ${{ inputs.db_type }}
               run: |
-                  uv run ansible-playbook -i inventory.yml playbook.yml --extra-vars "traefik_rule=${traefik_rule} service_name=${service_name} docker_image=${docker_image} service_port=${service_port} network_name=${network_name} project_directory=${project_directory} add_labels=${add_labels}"
+                  uv run ansible-playbook -i inventory.yml playbook.yml --extra-vars "traefik_rule=${traefik_rule} service_name=${service_name} docker_image=${docker_image} service_port=${service_port} network_name=${network_name} project_directory=${project_directory} add_labels=${add_labels} tier=${tier} project_name=${project_name} volume_path=${volume_path} db_type=${{ inputs.db_type }}"
