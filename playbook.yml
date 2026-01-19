@@ -34,7 +34,7 @@
 
     - name: Run containers with Docker Compose
       community.docker.docker_compose_v2:
-        project_src: "{{ project_directory }}"
+        project_src: "{{ project_directory }}/{{ tier }}"
         state: present
         recreate: auto
         pull: missing
