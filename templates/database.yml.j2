@@ -14,16 +14,6 @@ services:
 
     volumes:
       - {{service_name}}:{{volume_path}}
-      
-{% if add_labels %}
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.{{service_name}}.rule={{ traefik_rule }}"
-      - "traefik.http.routers.{{service_name}}.entrypoints=websecure"
-      - "traefik.http.routers.{{service_name}}.tls=true"
-      - "traefik.http.routers.{{service_name}}.tls.certresolver=letsencrypt"
-      - "traefik.http.services.{{service_name}}.loadbalancer.server.port={{ service_port }}"
-{% endif %}
 
     networks:
       - {{ network_name }}
