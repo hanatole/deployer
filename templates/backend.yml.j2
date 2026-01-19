@@ -2,7 +2,7 @@ name: {{ service_name }}
 services:
   {{service_name}}:
     image: {{ docker_image }}
-    container_name: "{{ service_name }}"
+    container_name: {{ service_name }}
     restart: unless-stopped
 
 {% if add_labels %}
