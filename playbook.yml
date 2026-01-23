@@ -54,3 +54,4 @@
       community.docker.docker_image:
         name: "{{ docker_image }}"
         source: pull
+        docker_host: "{{ registry_url }}"
