@@ -33,6 +33,13 @@
         dest: "{{ project_directory }}/{{ tier }}/.env"
         mode: "0644"
 
+    - name: Authenticate Docker to private registry
+      when: tier != "database"
+      community.docker.docker_login:
+        registry_url: "{{ registry_url }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+
     - name: Run containers with Docker Compose
       community.docker.docker_compose_v2:
         project_src: "{{ project_directory }}/{{ tier }}"
