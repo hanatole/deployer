@@ -64,6 +64,7 @@ jobs:
                   ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
 
             - name: Generate .env file
+              if: ${{ secrets.ENV_FILE != '' }}
               run: echo "${{ secrets.ENV_FILE }}" > .env
 
             - name: Set up Ansible for deployment
