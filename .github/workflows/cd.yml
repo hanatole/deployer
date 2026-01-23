@@ -83,7 +83,7 @@ jobs:
                   tier: ${{ inputs.tier }}
                   volume_path: ${{ inputs.volume_path }}
                   db_type: ${{ inputs.db_type }}
-                  username: ${{ secrets.REGISTRY_USER }}
+                  username: ${{ vars.REGISTRY_USER }}
                   password: ${{ secrets.REGISTRY_TOKEN }}
                   registry_url: ${{ secrets.REGISTRY }}
               run: |
