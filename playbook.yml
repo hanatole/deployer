@@ -35,7 +35,7 @@
 
     - name: Ensure Docker config directory exists
       ansible.builtin.file:
-        path: /home/{{ username }}/.docker
+        path: "/home/{{ username }}/.docker"
         state: directory
         owner: "{{ username }}"
         group: "{{ username }}"
