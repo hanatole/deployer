@@ -33,11 +33,6 @@
         dest: "{{ project_directory }}/{{ tier }}/.env"
         mode: "0644"
 
-    - name: Remove broken Docker auth config
-      ansible.builtin.file:
-        path: /root/.docker/config.json
-        state: absent
-
     - name: Authenticate Docker to private registry
       when: tier != "database"
       community.docker.docker_login:
@@ -45,6 +40,12 @@
         username: "{{ username }}"
         password: "{{ password }}"
         reauthorize: true
+
+    - name: Pull Docker images
+      when: tier != "database"
+      community.docker.docker_image:
+        name: "{{ docker_image }}"
+        source: pull
 
     - name: Run containers with Docker Compose
       community.docker.docker_compose_v2:
