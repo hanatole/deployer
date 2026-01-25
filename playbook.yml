@@ -12,5 +12,5 @@
       when: tier != "database"
       community.docker.docker_image:
         name: "{{ docker_image }}"
+        tag: "{{ docker_image_tag }}"
         source: pull
-        docker_host: "{{ registry_url }}"
