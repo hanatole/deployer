@@ -7,7 +7,32 @@
   vars:
     ansible_python_interpreter: /usr/bin/python3
 
+  pre_tasks:
+    - name: Create docker network
+      community.docker.docker_network:
+        name: "{{ network_name }}"
+        state: present
+
+    - name: Create service directory
+      ansible.builtin.file:
+        path: "{{ project_directory }}/{{ tier }}"
+        state: directory
+        mode: "0755"
+
   tasks:
+    - name: Copy Docker Compose file to server
+      ansible.builtin.template:
+        src: "{{ playbook_dir }}/templates/{{ tier }}.yml.j2"
+        dest: "{{ project_directory }}/{{ tier }}/compose.yml"
+        mode: "0644"
+
+    - name: Copy .env file to server
+      when: tier != "frontend"
+      ansible.builtin.copy:
+        src: "{{ playbook_dir }}/.env"
+        dest: "{{ project_directory }}/{{ tier }}/.env"
+        mode: "0644"
+
     - name: Authenticate Docker to private registry
       when: tier != "database"
       community.docker.docker_login:
@@ -19,6 +44,6 @@
     - name: Pull Docker images
       when: tier != "database"
       community.docker.docker_image:
-        name: "{{ docker_image }}"
+        name: "{{ fqn_docker_image }}"
         tag: "{{ docker_image_tag }}"
         source: pull
