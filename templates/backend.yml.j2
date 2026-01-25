@@ -1,7 +1,7 @@
 name: {{ service_name }}
 services:
   {{service_name}}:
-    image: "{{ docker_image }}:{{ docker_image_tag }}"
+    image: {{ docker_image }}
     container_name: {{ service_name }}
     restart: unless-stopped
 
@@ -23,4 +23,3 @@ networks:
   {{ network_name }}:
     name: {{ network_name }}
     external: true
-

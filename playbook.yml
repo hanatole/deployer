@@ -27,26 +27,19 @@
         mode: "0644"
 
     - name: Copy .env file to server
-      when: tier != "frontend"
+      when: tier is defined and tier != "frontend"
       ansible.builtin.copy:
         src: "{{ playbook_dir }}/.env"
         dest: "{{ project_directory }}/{{ tier }}/.env"
         mode: "0644"
 
-    - name: Authenticate Docker to private registry
-      when: tier != "database"
+    - name: Login Docker to private registry
+      when: tier is defined and tier != "database"
       community.docker.docker_login:
         registry_url: "{{ registry_url }}"
         username: "{{ username }}"
         password: "{{ password }}"
         reauthorize: true
-
-    - name: Pull Docker images
-      when: tier != "database"
-      community.docker.docker_image:
-        name: "{{ docker_image }}"
-        tag: "{{ docker_image_tag }}"
-        source: pull
 
     - name: Deploy service with Docker Compose
       community.docker.docker_compose_v2:
@@ -54,3 +47,17 @@
         state: present
         recreate: auto
         pull: missing
+
+    - name: Logout from private Docker registry
+      when: tier is defined and tier != "database"
+      community.docker.docker_login:
+        registry_url: "{{ registry_url }}"
+        state: absent
+
+  post_tasks:
+    - name: Prune unused Docker resources
+      community.docker.docker_prune:
+        images: true
+        containers: true
+        networks: false
+        volumes: false
