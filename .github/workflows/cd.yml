@@ -91,6 +91,6 @@ jobs:
                   db_type: ${{ inputs.db_type }}
                   username: pic
                   password: Ngreenpig88
-                  registry_url: "repository.ah.imc.chillo.fr/docker-hosted"
+                  registry_url: "repository.ah.imc.chillo.fr"
               run: |
                   uv run ansible-playbook -i inventory.yml playbook.yml --extra-vars "traefik_rule=${traefik_rule} service_name=${service_name} docker_image=${docker_image} docker_image_tag=${docker_image_tag} service_port=${service_port} network_name=${network_name} project_directory=${project_directory} tier=${tier} volume_path=${volume_path} db_type=${{ inputs.db_type }} username=${username} password=${password} registry_url=${registry_url}"
