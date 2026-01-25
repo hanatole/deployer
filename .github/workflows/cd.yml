@@ -85,6 +85,6 @@ jobs:
                   db_type: ${{ inputs.db_type }}
                   username: ${{ vars.REGISTRY_USER }}
                   password: ${{ secrets.REGISTRY_TOKEN }}
-                  registry_url: ${{ secrets.REGISTRY }}
+                  registry_url: ${{ vars.REGISTRY }}
               run: |
                   uv run ansible-playbook -i inventory.yml playbook.yml --extra-vars "traefik_rule=${traefik_rule} service_name=${service_name} docker_image=${docker_image} service_port=${service_port} network_name=${network_name} project_directory=${project_directory} tier=${tier} volume_path=${volume_path} db_type=${{ inputs.db_type }} username=${username} password=${password} registry_url=${registry_url}"
