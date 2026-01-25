@@ -8,13 +8,6 @@
     ansible_python_interpreter: /usr/bin/python3
 
   tasks:
-    - name: Authenticate Docker to private registry
-      when: tier != "database"
-      community.docker.docker_login:
-        registry_url: "{{ registry_url }}"
-        username: "{{ username }}"
-        password: "{{ password }}"
-
     - name: Pull Docker images
       when: tier != "database"
       community.docker.docker_image:
