@@ -8,6 +8,17 @@
     ansible_python_interpreter: /usr/bin/python3
 
   tasks:
-    - name: Debug
-      ansible.builtin.debug:
-        msg: "URL: {{ registry_url }}, username: {{ username }} password: {{ password }}"
+    - name: Authenticate Docker to private registry
+      when: tier != "database"
+      community.docker.docker_login:
+        registry_url: "{{ registry_url }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        reauthorize: true
+
+    - name: Pull Docker images
+      when: tier != "database"
+      community.docker.docker_image:
+        name: "{{ docker_image }}"
+        source: pull
+        docker_host: "{{ registry_url }}"
