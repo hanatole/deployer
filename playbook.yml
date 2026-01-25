@@ -44,6 +44,6 @@
     - name: Pull Docker images
       when: tier != "database"
       community.docker.docker_image:
-        name: "{{ fqn_docker_image }}"
+        name: "{{ docker_image }}"
         tag: "{{ docker_image_tag }}"
         source: pull
